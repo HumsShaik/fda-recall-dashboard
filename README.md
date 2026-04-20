@@ -43,3 +43,7 @@ It also includes a **smart query assistant** that allows users to ask natural-la
 ---
 
 ## 📁 Project Structure
+
+## 📸 Project Screenshot
+
+![FDA Dashboard](screenshot.png)
