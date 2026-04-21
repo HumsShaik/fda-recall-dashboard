@@ -47,28 +47,51 @@ if uploaded_file:
             reason_col = col
 
     # -------------------------
-    # METRICS (TOP KPIs)
+    # SIDEBAR FILTERS
+    # -------------------------
+    st.sidebar.header("🔍 Filters")
+
+    filtered_df = df.copy()
+
+    if company_col:
+        companies = st.sidebar.multiselect(
+            "Select Company",
+            options=df[company_col].dropna().unique()
+        )
+        if companies:
+            filtered_df = filtered_df[filtered_df[company_col].isin(companies)]
+
+    if reason_col:
+        reasons = st.sidebar.multiselect(
+            "Select Reason",
+            options=df[reason_col].dropna().unique()
+        )
+        if reasons:
+            filtered_df = filtered_df[filtered_df[reason_col].isin(reasons)]
+
+    # -------------------------
+    # METRICS
     # -------------------------
     st.subheader("📌 Key Metrics")
 
     col1, col2, col3 = st.columns(3)
 
-    col1.metric("Total Records", len(df))
+    col1.metric("Total Records", len(filtered_df))
 
     if company_col:
-        col2.metric("Unique Companies", df[company_col].nunique())
+        col2.metric("Unique Companies", filtered_df[company_col].nunique())
     else:
         col2.metric("Unique Companies", "N/A")
 
     if reason_col:
-        col3.metric("Unique Reasons", df[reason_col].nunique())
+        col3.metric("Unique Reasons", filtered_df[reason_col].nunique())
     else:
         col3.metric("Unique Reasons", "N/A")
 
     st.markdown("---")
 
     # -------------------------
-    # CHARTS (SIDE BY SIDE)
+    # CHARTS
     # -------------------------
     st.subheader("📊 Insights")
 
@@ -77,24 +100,34 @@ if uploaded_file:
     if company_col:
         with col1:
             st.markdown("### 🏢 Top Companies")
-            st.bar_chart(df[company_col].value_counts().head(10))
+            st.bar_chart(filtered_df[company_col].value_counts().head(10))
     else:
         col1.warning("No company column found")
 
     if reason_col:
         with col2:
             st.markdown("### ⚠️ Recall Reasons")
-            st.bar_chart(df[reason_col].value_counts().head(10))
+            st.bar_chart(filtered_df[reason_col].value_counts().head(10))
     else:
         col2.warning("No reason column found")
 
     st.markdown("---")
 
     # -------------------------
-    # DATA PREVIEW (EXPANDABLE)
+    # DOWNLOAD BUTTON
+    # -------------------------
+    st.download_button(
+        label="📥 Download Filtered Data",
+        data=filtered_df.to_csv(index=False),
+        file_name="filtered_data.csv",
+        mime="text/csv"
+    )
+
+    # -------------------------
+    # DATA PREVIEW
     # -------------------------
     with st.expander("📄 View Raw Data"):
-        st.dataframe(df)
+        st.dataframe(filtered_df)
 
     # -------------------------
     # SMART QUERY ASSISTANT
@@ -107,28 +140,28 @@ if uploaded_file:
         q = q.lower()
 
         if "count" in q:
-            st.success(f"Total records: {len(df)}")
+            st.success(f"Total records: {len(filtered_df)}")
 
         elif "company" in q or "firm" in q or "top" in q:
             if company_col:
-                st.write(df[company_col].value_counts().head(10))
+                st.write(filtered_df[company_col].value_counts().head(10))
             else:
                 st.error("No company column found")
 
         elif "reason" in q:
             if reason_col:
-                st.write(df[reason_col].value_counts().head(10))
+                st.write(filtered_df[reason_col].value_counts().head(10))
             else:
                 st.error("No reason column found")
 
         elif "summary" in q:
             if company_col and reason_col:
-                top_company = df[company_col].value_counts().idxmax()
-                top_reason = df[reason_col].value_counts().idxmax()
+                top_company = filtered_df[company_col].value_counts().idxmax()
+                top_reason = filtered_df[reason_col].value_counts().idxmax()
 
                 st.info(f"""
                 📌 Summary:
-                - Total records: {len(df)}
+                - Total records: {len(filtered_df)}
                 - Top company: {top_company}
                 - Top issue: {top_reason}
                 """)
