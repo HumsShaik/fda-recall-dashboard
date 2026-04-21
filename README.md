@@ -5,9 +5,8 @@ An interactive data analytics web application built using Python and Streamlit t
 ---
 
 ## 🚀 Live Demo
-(If deployed later, add link here)
-Example:
-https://your-streamlit-app-link
+
+https://fda-recall-dashboard.streamlit.app/
 
 ---
 
