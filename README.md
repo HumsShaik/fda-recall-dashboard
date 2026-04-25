@@ -43,6 +43,13 @@ It also includes a **smart query assistant** that allows users to ask natural-la
 
 ## 📁 Project Structure
 
+FDA-Recall-Project/
+│
+├── app.py
+├── README.md
+├── requirements.txt
+├── screenshot.png   
+
 ## 📸 Project Screenshot
 
 ![FDA Dashboard](Screenshot.png)
